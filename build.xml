@@ -1,0 +1,48 @@
+<project name="vitis" default="dist" basedir=".">
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    <property name="lib" location="lib"/>
+
+    <path id="classpath">
+        <fileset dir="${lib}" includes="**/*.jar"/>
+    </path>
+
+    <target name="init">
+	<!-- Create the time stamp -->
+	<tstamp/>
+	<!-- Create the build directory structure used by compile -->
+	<mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source" >
+	<!-- Compile the java code from ${src} into ${build} -->
+	<javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
+    </target>
+
+    <target name="jar" depends="compile" description="generate the distribution" >
+        <!-- Create the distribution directory -->
+	<mkdir dir="${lib}"/>
+
+	<!-- Put everything in ${build} into the vitis.jar file -->
+	<jar jarfile="${lib}/vitis.jar" basedir="${build}"/>
+    </target>
+
+
+    <target name="run" depends="jar" description="run the simulator" >
+	<!-- Run the simulator -->
+	<java classname="p2p.main.Main" fork="true">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+	</java>
+    </target>
+
+
+    <target name="clean" description="clean up" >
+        <!-- Delete the ${build} and ${dist} directory trees -->
+	<delete dir="${build}"/>
+	<delete dir="${dist}"/>
+    </target>
+</project>
